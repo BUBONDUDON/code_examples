@@ -14,7 +14,7 @@ export const AppHeader = () => {
           marginBottom: 30,
         }}
       >
-        <Link to={ROUTES.HOME}>Task manager</Link>
+        <Link to={ROUTES.HOME}>Task tracker</Link>
       </Typography.Title>
     </Header>
   );

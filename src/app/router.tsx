@@ -8,7 +8,8 @@ export const router = createBrowserRouter([
     children: [
       {
         path: ROUTES.TASKS,
-        lazy: () => import("@/features/task-feature/tasks-list-page/Tasks.page"),
+        lazy: () =>
+          import("@/features/task-feature/tasks-list-page/Tasks.page"),
       },
       {
         path: ROUTES.TASK,
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.HOME,
+        loader: () => redirect(ROUTES.TASKS),
+      },
+      {
+        path: "*",
         loader: () => redirect(ROUTES.TASKS),
       },
     ],

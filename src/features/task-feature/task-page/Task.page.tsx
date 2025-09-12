@@ -27,6 +27,7 @@ function Task() {
       cancelText: "Отмена",
       onOk: () => {
         deleteTask(task.id);
+        history.back();
       },
     });
   };

@@ -1,4 +1,12 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export interface Task {
   id: string;
@@ -10,9 +18,9 @@ export interface Task {
   tags: string[];
 }
 
-export type CreateTaskInput = Omit<Task, "id" | "createdAt"> & { createdAt?: Date };
+export type CreateTaskInput = Omit<Task, "id" | "createdAt">;
 
-export type UpdateTaskInput = Partial<Omit<Task, "id" | "createdAt">> & { id: string };
+export type UpdateTaskInput = Partial<Omit<Task, "createdAt">>;
 
 type TasksContextValue = {
   tasks: Task[];
@@ -34,13 +42,19 @@ function reviveTasks(raw: unknown): Task[] {
       try {
         const createdAt = new Date((t as any).createdAt);
         return {
-          id: String((t as any).id ?? crypto.randomUUID?.() ?? Date.now().toString()),
+          id: String(
+            (t as any).id ?? crypto.randomUUID?.() ?? Date.now().toString()
+          ),
           title: String((t as any).title ?? ""),
-          description: (t as any).description ? String((t as any).description) : undefined,
+          description: (t as any).description
+            ? String((t as any).description)
+            : undefined,
           status: ((t as any).status as Task["status"]) ?? "todo",
           priority: ((t as any).priority as Task["priority"]) ?? "medium",
           createdAt: isNaN(createdAt.getTime()) ? new Date() : createdAt,
-          tags: Array.isArray((t as any).tags) ? (t as any).tags.map(String) : [],
+          tags: Array.isArray((t as any).tags)
+            ? (t as any).tags.map(String)
+            : [],
         } satisfies Task;
       } catch {
         return null;
@@ -62,10 +76,12 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const serializable = tasks.map((t) => ({ ...t, createdAt: t.createdAt.toISOString() }));
+      const serializable = tasks.map((t) => ({
+        ...t,
+        createdAt: t.createdAt.toISOString(),
+      }));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
-    } catch {
-    }
+    } catch {}
   }, [tasks]);
 
   const createTask = useCallback((input: CreateTaskInput): Task => {
@@ -75,7 +91,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
       description: input.description,
       status: input.status,
       priority: input.priority,
-      createdAt: input.createdAt ?? new Date(),
+      createdAt: new Date(),
       tags: input.tags ?? [],
     };
     setTasks((prev) => [newTask, ...prev]);
@@ -84,7 +100,11 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
   const updateTask = useCallback((input: UpdateTaskInput) => {
     setTasks((prev) =>
-      prev.map((t) => (t.id === input.id ? { ...t, ...input, id: t.id, createdAt: t.createdAt } : t))
+      prev.map((t) =>
+        t.id === input.id
+          ? { ...t, ...input, id: t.id, createdAt: t.createdAt }
+          : t
+      )
     );
   }, []);
 
@@ -92,14 +112,17 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const getTaskById = useCallback((id: string) => tasks.find((t) => t.id === id), [tasks]);
+  const getTaskById = useCallback(
+    (id: string) => tasks.find((t) => t.id === id),
+    [tasks]
+  );
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
     for (const t of tasks) {
       for (const tag of t.tags) set.add(tag);
     }
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
+    return Array.from(set);
   }, [tasks]);
 
   const value = useMemo<TasksContextValue>(
@@ -107,7 +130,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     [tasks, createTask, updateTask, deleteTask, getTaskById, allTags]
   );
 
-  return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>;
+  return (
+    <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
+  );
 }
 
 export function useTasks() {
@@ -115,5 +140,3 @@ export function useTasks() {
   if (!ctx) throw new Error("useTasks must be used within TasksProvider");
   return ctx;
 }
-
-

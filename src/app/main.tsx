@@ -5,7 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router.tsx";
 import { ConfigProvider, theme } from "antd";
 import { TasksProvider } from "@/shared/model/tasks.tsx";
-import "./styles.css";
+import "antd/dist/reset.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConfigProvider

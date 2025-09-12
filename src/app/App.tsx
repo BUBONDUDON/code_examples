@@ -3,7 +3,7 @@ import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 function App() {
   return (
-    <Layout>
+    <Layout style={{ minHeight: "100vh" }}>
       <AppHeader />
       <Outlet />
     </Layout>

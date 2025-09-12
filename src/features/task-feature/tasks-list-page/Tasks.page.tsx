@@ -1,7 +1,24 @@
-import { Badge, Card, Col, Empty, Flex, Input, Row, Select, Space, Tag, Typography } from "antd";
+import {
+  Badge,
+  Card,
+  Col,
+  Empty,
+  Flex,
+  Input,
+  Row,
+  Select,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
 import { useMemo, useState } from "react";
 import { useTasks } from "@/shared/model/tasks.tsx";
-import { CheckCircleTwoTone, ClockCircleTwoTone, ExclamationCircleTwoTone, FireTwoTone } from "@ant-design/icons";
+import {
+  CheckCircleTwoTone,
+  ClockCircleTwoTone,
+  ExclamationCircleTwoTone,
+  FireTwoTone,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { TaskModal } from "@/features/modal";
 import { ROUTES } from "@/shared/model/routes";
@@ -9,17 +26,24 @@ import { ROUTES } from "@/shared/model/routes";
 function Tasks() {
   const { tasks } = useTasks();
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<"todo" | "in-progress" | "done" | "">("");
+  const [status, setStatus] = useState<"todo" | "in-progress" | "done" | "">(
+    ""
+  );
   const [priority, setPriority] = useState<"low" | "medium" | "high" | "">("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return tasks.filter((t) => {
-      if (q && !(`${t.title} ${t.description ?? ""}`.toLowerCase().includes(q))) return false;
+      if (q && !`${t.title} ${t.description ?? ""}`.toLowerCase().includes(q))
+        return false;
       if (status && t.status !== status) return false;
       if (priority && t.priority !== priority) return false;
-      if (selectedTags.length > 0 && !selectedTags.every((tg) => t.tags.includes(tg))) return false;
+      if (
+        selectedTags.length > 0 &&
+        !selectedTags.every((tg) => t.tags.includes(tg))
+      )
+        return false;
       return true;
     });
   }, [tasks, query, status, priority, selectedTags]);
@@ -50,7 +74,11 @@ function Tasks() {
   };
 
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%", padding: 24 }}>
+    <Space
+      direction="vertical"
+      size="large"
+      style={{ width: "100%", height: "100%", padding: 24 }}
+    >
       <Flex align="center" justify="space-between" wrap>
         <Typography.Title level={3} style={{ margin: 0 }}>
           Задачи
@@ -66,10 +94,20 @@ function Tasks() {
           />
         </Col>
         <Col xs={12} md={7} lg={6} xl={4}>
-          <Select style={{ width: "100%" }} options={statusOptions} value={status} onChange={setStatus} />
+          <Select
+            style={{ width: "100%" }}
+            options={statusOptions}
+            value={status}
+            onChange={setStatus}
+          />
         </Col>
         <Col xs={12} md={7} lg={6} xl={4}>
-          <Select style={{ width: "100%" }} options={priorityOptions} value={priority} onChange={setPriority} />
+          <Select
+            style={{ width: "100%" }}
+            options={priorityOptions}
+            value={priority}
+            onChange={setPriority}
+          />
         </Col>
         <Col xs={24} md={24} lg={8} xl={6}>
           <Select
@@ -93,20 +131,36 @@ function Tasks() {
                 title={
                   <Space>
                     <span>{t.title}</span>
-                    <Badge color={priorityColor[t.priority]} text={t.priority} />
+                    <Badge
+                      color={priorityColor[t.priority]}
+                      text={t.priority}
+                    />
                   </Space>
                 }
-                styles={{ body: { borderLeft: `4px solid ${priorityColor[t.priority]}` } as any }}
+                styles={{
+                  body: {
+                    borderLeft: `4px solid ${priorityColor[t.priority]}`,
+                  },
+                }}
                 extra={<Link to={`${ROUTES.TASKS}/${t.id}`}>Открыть</Link>}
               >
-                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <Space
+                  direction="vertical"
+                  size="small"
+                  style={{ width: "100%" }}
+                >
                   <Space>
                     {statusIcon[t.status]}
-                    <Typography.Text type="secondary">{t.status}</Typography.Text>
+                    <Typography.Text type="secondary">
+                      {t.status}
+                    </Typography.Text>
                     <FireTwoTone twoToneColor="#fa8c16" />
                   </Space>
                   {t.description && (
-                    <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ margin: 0 }}>
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 2 }}
+                      style={{ margin: 0 }}
+                    >
                       {t.description}
                     </Typography.Paragraph>
                   )}
