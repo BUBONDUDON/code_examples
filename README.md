@@ -1,69 +1,38 @@
-# React + TypeScript + Vite
+# TASK MANAGER 📝
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🗂️ Структура проекта
 
-Currently, two official plugins are available:
+Проект организован по слоям для удобства разработки и поддержки:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+•   **`app/`**: ⚙️ Основные компоненты приложения (App, router). Точка входа.
+•   **`features/`**: 🧩 Функциональные блоки (Header, Modal, Task Page).  Самостоятельные фичи.
+•   **`shared/`**: ♻️ Переиспользуемые компоненты, типы данных (`model/`) и общие функции.
 
-## Expanding the ESLint configuration
+## 📐 Контроль границ слоев
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Для соблюдения структуры проекта используется плагин `eslint-plugin-boundaries`.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+•   **Правила ESLint**:  Настроены правила, которые обеспечивают строгую зависимость слоев:
+    •   `shared` может импортировать только `shared`.
+    •   `features` может импортировать `shared` и `features`.
+    •   `app` может импортировать все слои.
+•   **Запрет циклических зависимостей**:  Предотвращается создание циклических зависимостей между модулями.
+•   **Точки входа**: Разрешен импорт в `features` только из `index.(ts|tsx)` или `*.page.(ts|tsx)`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 🗺️ Alias пути
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Для удобства импорта модулей настроены alias пути:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+•   `@app`: `./src/app`
+•   `@features`: `./src/features`
+•   `@shared`: `./src/shared`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📍 Маршрутизация
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*   `/tasks` (**`ROUTES.TASKS`**):  Отображает список задач.
+*   `/task/:id` (**`ROUTES.TASK`**):  Отображает страницу конкретной задачи.
+*   `*`:  Любой не существующий маршрут перенаправляет на страницу `/tasks`.
+
+*   Компонент `<App>` является оберткой для всех маршрутов. Ленивая загрузка страниц (`lazy: () => import(...)`) - оптимизация приложения. 
+*   Все маршруты определены в константах в файле `shared/model/routes`.
+
